@@ -1,5 +1,6 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
 from typing import Any
+from content import RESTORAUNTS, MENU
 
 
 def chunks(lst: list[Any], n: int):
@@ -34,3 +35,12 @@ def create_reply_kb(items: list[str], row_width: int = 1) -> ReplyKeyboardMarkup
         kb.row(*row)
 
     return kb
+
+
+def find_menu_item_by_id(menu_item_id: int) -> dict:
+    return next(item for item in MENU if item['id'] == menu_item_id)
+
+
+
+def find_restoraunt_by_id(restoraunt_id: int) -> dict:
+    return next(rest for rest in RESTORAUNTS if rest['id'] == restoraunt_id)

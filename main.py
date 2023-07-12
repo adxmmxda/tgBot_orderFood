@@ -7,8 +7,9 @@ from aiogram.utils import executor
 from aiogram.utils.callback_data import CallbackData
 from dotenv import load_dotenv
 
-from helper import create_inline_kb, create_reply_kb
+from helper import create_inline_kb, create_reply_kb, find_menu_item_by_id, find_restoraunt_by_id
 from content import RESTORAUNTS, MENU
+from basket import Basket
 
 load_dotenv('.env.local')
 
@@ -17,6 +18,8 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 
 restoraunt_callback_data = CallbackData('restoraunt', 'id')
 add_to_basket_callback_data = CallbackData('add_to_basket', 'menu_item_id')
+
+basket = Basket()
 
 
 @dp.message_handler(
@@ -37,7 +40,7 @@ async def restoraunt_list_handler(message: types.Message) -> None:
     restoraunt_callback_data.filter(),
 )
 async def restoraunt_handler(call: types.CallbackQuery, callback_data: dict) -> None:
-    restoraunt = next(rest for rest in RESTORAUNTS if rest['id'] == int(callback_data['id']))
+    restoraunt = find_restoraunt_by_id(int(callback_data['id']))
 
     await bot.send_message(call.message.chat.id, 'Меню ресторана {}'.format(restoraunt['name']))
 
@@ -59,12 +62,50 @@ async def restoraunt_handler(call: types.CallbackQuery, callback_data: dict) -> 
     await call.answer()
 
 
+@dp.callback_query_handler(
+    add_to_basket_callback_data.filter(),
+)
+async def add_to_basket_handler(call: types.CallbackQuery, callback_data: dict) -> None:
+    menu_item = find_menu_item_by_id(int(callback_data['menu_item_id']))
+
+    basket.add(call.message.chat.id, menu_item['id'])
+    await bot.send_message(call.message.chat.id, 'Добавили {} в вашу корзину'.format(menu_item['name']))
+
+    await call.answer()
+
+
 @dp.message_handler(
     content_types=[types.ContentType.TEXT],
     text='Корзина',
 )
-async def message_handler(message: types.Message) -> None:
-    await bot.send_message(message.chat.id, 'Ваша корзина пуста')
+async def show_basket_handler(message: types.Message) -> None:
+    menu_item_id_to_quantity = basket.get_user_items(message.chat.id)
+
+    if menu_item_id_to_quantity == {}:
+        await bot.send_message(message.chat.id, 'Ваша корзина пуста')
+        return
+    
+    await bot.send_message(message.chat.id, 'Вы добавили в корзину:')
+    total_sum = 0
+
+    for menu_item_id in menu_item_id_to_quantity.keys():
+        menu_item = find_menu_item_by_id(menu_item_id)
+        restoraunt = find_restoraunt_by_id(menu_item['restoraunt_id'])
+        quantity = menu_item_id_to_quantity[menu_item_id]
+        item_total_price = quantity * menu_item['price']
+        total_sum += item_total_price
+
+        await bot.send_message(
+            message.chat.id,
+            '"{}" {} шт из ресторана "{}" на сумму {} руб'.format(
+                menu_item['name'],
+                quantity,
+                restoraunt['name'],
+                item_total_price,
+            ),
+        )
+    
+    await bot.send_message(message.chat.id, 'Итого: {} руб'.format(total_sum))
 
 
 @dp.message_handler(
