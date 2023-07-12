@@ -18,6 +18,7 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 
 restoraunt_callback_data = CallbackData('restoraunt', 'id')
 add_to_basket_callback_data = CallbackData('add_to_basket', 'menu_item_id')
+order_callback_data = CallbackData('order')
 
 basket = Basket()
 
@@ -105,8 +106,21 @@ async def show_basket_handler(message: types.Message) -> None:
             ),
         )
     
-    await bot.send_message(message.chat.id, 'Итого: {} руб'.format(total_sum))
+    await bot.send_message(message.chat.id, 'Итого: {} руб'.format(total_sum), reply_markup=create_inline_kb([
+        {
+            'text': 'Оформить заказ',
+            'callback_data': order_callback_data.new(),
+        }
+    ]))
 
+
+@dp.callback_query_handler(
+    order_callback_data.filter(),
+)
+async def order_handler(call: types.CallbackQuery) -> None:
+    basket.clear(call.message.chat.id)
+
+    await bot.send_message(call.message.chat.id, 'Спасибо за ваш заказ, наш менеджер свяжется с вами в ближайшее время')
 
 @dp.message_handler(
     commands=['start'],
