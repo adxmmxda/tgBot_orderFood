@@ -15,7 +15,7 @@ from basket import Basket
 from datetime import datetime
 
 load_dotenv('.env.local')
-GROUP_ID = -4254949432
+GROUP_ID = 
 bot = Bot(token=os.environ['BOT_TOKEN'], parse_mode='html')
 dp = Dispatcher(bot, storage=MemoryStorage())
 
@@ -24,7 +24,7 @@ add_to_basket_callback_data = CallbackData('add_to_basket', 'menu_item_id')
 order_callback_data = CallbackData('order')
 
 basket = Basket()
-users = ["Мехроч", "Мустафо", "Нодир", "Точвар", "Дилмурод"]
+users = []
 
 
 @dp.message_handler(
