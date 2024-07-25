@@ -121,6 +121,10 @@ async def show_basket_handler(message: types.Message) -> None:
             {
                 'text': 'Оформить заказ',
                 'callback_data': order_callback_data.new(action='confirm'),
+            },
+            {
+                'text': 'Отменить заказ',
+                'callback_data': order_callback_data.new(action='cancel'),
             }
         ])
     )
@@ -159,6 +163,12 @@ async def confirm_order(call: types.CallbackQuery):
     
     # Уведомление пользователя
     await call.message.edit_text('Ваш заказ был отправлен на обработку.')
+    await call.answer()
+
+@dp.callback_query_handler(order_callback_data.filter(action='cancel'))
+async def cancel_order(call: types.CallbackQuery):
+    basket.clear(call.message.chat.id)
+    await call.message.edit_text('Ваш заказ был отменен.')
     await call.answer()
 
 # Обработка команды /basket
