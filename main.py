@@ -15,7 +15,7 @@ from basket import Basket
 from datetime import datetime
 
 load_dotenv('.env.local')
-GROUP_ID = -4254949432
+GROUP_ID = 
 bot = Bot(token=os.environ['BOT_TOKEN'], parse_mode='html')
 dp = Dispatcher(bot, storage=MemoryStorage())
 
