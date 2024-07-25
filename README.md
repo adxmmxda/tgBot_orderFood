@@ -1,5 +1,5 @@
 # tg-bot-food-order
-Телеграм бот для заказы еды из ресторана
+Телеграм бот для заказы еды 
 
 # Инструкция по запуску
 
@@ -16,7 +16,3 @@ BOT_TOKEN=4037403184:BAEPwpppgPCCaaaeNH6ZFZLfr5f78M0Evzq80
 - Запускаем скрипт нашего бота `python main.py`
 - Все, бот должен работать
 
-# Состояния бота
-
-- [Эхо-бот](https://github.com/melihovv/tg-bot-food-order/tree/1_echo)
-- [Бот для заказа еды из ресторанов](https://github.com/melihovv/tg-bot-food-order/tree/2_restoraunts)
