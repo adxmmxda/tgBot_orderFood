@@ -19,3 +19,5 @@ class Basket:
 
     def clear(self, user_id: int) -> None:
         self.user_items[user_id] = {}
+
+

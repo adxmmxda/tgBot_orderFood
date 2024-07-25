@@ -44,3 +44,5 @@ def find_menu_item_by_id(menu_item_id: int) -> dict:
 
 def find_restoraunt_by_id(restoraunt_id: int) -> dict:
     return next(rest for rest in RESTORAUNTS if rest['id'] == restoraunt_id)
+
+
