@@ -24,7 +24,7 @@ add_to_basket_callback_data = CallbackData('add_to_basket', 'menu_item_id')
 order_callback_data = CallbackData('order')
 
 basket = Basket()
-users = ["Мехроч", "Мустафо", "Нодир", "Точвар", "Дилмурод"]
+users = []
 
 
 @dp.message_handler(
